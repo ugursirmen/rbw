@@ -1,17 +1,24 @@
 "use client";
 
 import Box from "@mui/material/Box";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
 import Paper from "@mui/material/Paper";
+import Select from "@mui/material/Select";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import Image from "next/image";
 
 import { useLanguage } from "@/i18n/LanguageProvider";
-import type { RoiInputs } from "@/lib/roi";
 import type { TranslationKey } from "@/i18n/dictionary";
+import type { RoiInputs } from "@/lib/roi";
 
 type Props = {
   inputs: RoiInputs;
   onChange: (next: RoiInputs) => void;
+  selectedSystem: string;
+  onSystemChange: (value: string) => void;
 };
 
 const FIELDS: { key: keyof RoiInputs; label: TranslationKey; step?: number }[] = [
@@ -26,7 +33,19 @@ const FIELDS: { key: keyof RoiInputs; label: TranslationKey; step?: number }[] =
   { key: "powerConsumption", label: "power_consumption", step: 0.1 },
 ];
 
-export default function InputsPanel({ inputs, onChange }: Props) {
+const SYSTEMS = [
+  { value: "rb-mig", label: "RB-Mig" },
+  { value: "rb-tig", label: "RB-Tig" },
+  { value: "rb-lazer", label: "RB-Lazer" },
+  { value: "rb-cut", label: "RB-Cut" },
+  { value: "rb-grind", label: "RB-Grind" },
+  { value: "rb-deburr", label: "RB-Deburr" },
+  { value: "rb-clean", label: "RB-Clean" },
+  { value: "rb-brush", label: "RB-Brush" },
+  { value: "rb-pall", label: "RB-Pall" },
+];
+
+export default function InputsPanel({ inputs, onChange, selectedSystem, onSystemChange }: Props) {
   const { t } = useLanguage();
 
   const handle = (key: keyof RoiInputs) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,6 +60,36 @@ export default function InputsPanel({ inputs, onChange }: Props) {
       <Typography variant="h3" sx={{ mb: 2 }}>
         {t("inputs_section")}
       </Typography>
+
+      <FormControl fullWidth size="small" sx={{ mb: 2 }}>
+        <InputLabel>{t("rbware_system")}</InputLabel>
+        <Select
+          value={selectedSystem}
+          label={t("rbware_system")}
+          onChange={(e) => onSystemChange(e.target.value)}
+        >
+          <MenuItem value="">—</MenuItem>
+          {SYSTEMS.map((s) => (
+            <MenuItem key={s.value} value={s.value}>
+              {s.label}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+
+      {selectedSystem && (
+        <Box sx={{ mb: 2 }}>
+          <Image
+            src={`/${selectedSystem}.png`}
+            alt={selectedSystem}
+            width={600}
+            height={400}
+            style={{ width: "100%", height: "auto", borderRadius: 4 }}
+            unoptimized
+          />
+        </Box>
+      )}
+
       <Box
         sx={{
           display: "grid",

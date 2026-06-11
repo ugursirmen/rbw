@@ -66,6 +66,8 @@ const en: Dict = {
   scenario_assumptions: "Realistic = constant annual saving (linear). Optimistic adds higher productivity and labor-cost inflation. Pessimistic adds slow ramp-up and annual maintenance cost.",
   scenario_breakeven_label: "{name}: {value}",
   scenario_never: "never",
+  rbware_system: "RB-Ware System Solutions",
+  save_pdf: "Save as PDF",
 };
 
 const tr: Dict = {
@@ -127,6 +129,8 @@ const tr: Dict = {
   scenario_assumptions: "Gerçekçi = sabit yıllık tasarruf (doğrusal). İyimser daha yüksek verimlilik + işçilik enflasyonu ekler. Kötümser yavaş ramp-up + yıllık bakım gideri ekler.",
   scenario_breakeven_label: "{name}: {value}",
   scenario_never: "asla",
+  rbware_system: "RB-Ware Sistem Çözümleri",
+  save_pdf: "PDF Olarak Kaydet",
 };
 
 const dictionaries: Record<Language, Dict> = { en, tr };

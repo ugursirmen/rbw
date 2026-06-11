@@ -28,6 +28,7 @@ export default function AppHeader() {
         bgcolor: "background.paper",
         color: "text.primary",
         borderBottom: `1px solid ${theme.palette.divider}`,
+        displayPrint: "none",
       }}
     >
       <Toolbar sx={{ gap: 2, minHeight: { xs: 64, sm: 72 } }}>
@@ -39,7 +40,7 @@ export default function AppHeader() {
             px: 1.25,
             py: 0.75,
             borderRadius: 1.5,
-            bgcolor: alpha(theme.palette.primary.main, 0.06),
+            bgcolor: "rgb(50, 50, 50)",
           }}
         >
           <Image
