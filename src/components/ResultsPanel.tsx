@@ -45,75 +45,61 @@ function Stat({
   );
 }
 
-export default function ResultsPanel({ result }: Props) {
+export function CalculatedPanel({ result }: Props) {
   const { t, lang } = useLanguage();
   const locale = lang === "tr" ? "tr-TR" : "en-US";
 
   const calculated: { label: TranslationKey; value: string }[] = [
-    {
-      label: "annual_robot_capacity",
-      value: formatNumber(result.annualRobotCapacity, locale),
-    },
-    {
-      label: "annual_available_labor",
-      value: formatNumber(result.annualAvailableLabor, locale),
-    },
-    {
-      label: "annual_manual_cost",
-      value: formatCurrency(result.annualManualCost, locale),
-    },
-    {
-      label: "annual_amortization",
-      value: formatCurrency(result.annualAmortization, locale),
-    },
-    {
-      label: "annual_power_cost",
-      value: formatCurrency(result.annualPowerCost, locale),
-    },
-    {
-      label: "theoretical_welders",
-      value: formatNumber(result.theoreticalWelders, locale, 0),
-    },
-    {
-      label: "productivity_increase",
-      value: formatPercent(result.productivityIncrease, locale, 1),
-    },
+    { label: "annual_robot_capacity", value: formatNumber(result.annualRobotCapacity, locale) },
+    { label: "annual_available_labor", value: formatNumber(result.annualAvailableLabor, locale) },
+    { label: "annual_manual_cost", value: formatCurrency(result.annualManualCost, locale) },
+    { label: "annual_amortization", value: formatCurrency(result.annualAmortization, locale) },
+    { label: "annual_power_cost", value: formatCurrency(result.annualPowerCost, locale) },
+    { label: "theoretical_welders", value: formatNumber(result.theoreticalWelders, locale, 0) },
+    { label: "productivity_increase", value: formatPercent(result.productivityIncrease, locale, 1) },
   ];
 
   const utilizationPct = Math.min(Math.max(result.robotUtilization * 100, 0), 100);
+
+  return (
+    <Paper variant="outlined" sx={{ p: 2 }}>
+      <Typography variant="h3" sx={{ mb: 1.5 }}>
+        {t("calculated_section")}
+      </Typography>
+      <Box>
+        {calculated.map((row) => (
+          <Stat key={row.label} label={t(row.label)} value={row.value} />
+        ))}
+      </Box>
+      <Box sx={{ mt: 2 }}>
+        <Box sx={{ display: "flex", justifyContent: "space-between", mb: 0.5 }}>
+          <Typography variant="body2" color="text.secondary">
+            {t("robot_utilization")}
+          </Typography>
+          <Typography variant="body2" sx={{ fontWeight: 600 }}>
+            {formatPercent(result.robotUtilization, locale, 1)}
+          </Typography>
+        </Box>
+        <LinearProgress
+          variant="determinate"
+          value={utilizationPct}
+          color={result.overCapacity ? "warning" : "primary"}
+          sx={{ height: 8, borderRadius: 1 }}
+        />
+      </Box>
+    </Paper>
+  );
+}
+
+export default function ResultsPanel({ result }: Props) {
+  const { t, lang } = useLanguage();
+  const locale = lang === "tr" ? "tr-TR" : "en-US";
 
   return (
     <Stack spacing={2}>
       {result.overCapacity && (
         <Alert severity="warning">{t("warn_robot_capacity")}</Alert>
       )}
-      <Paper variant="outlined" sx={{ p: 2 }}>
-        <Typography variant="h3" sx={{ mb: 1.5 }}>
-          {t("calculated_section")}
-        </Typography>
-        <Box>
-          {calculated.map((row) => (
-            <Stat key={row.label} label={t(row.label)} value={row.value} />
-          ))}
-        </Box>
-        <Box sx={{ mt: 2 }}>
-          <Box sx={{ display: "flex", justifyContent: "space-between", mb: 0.5 }}>
-            <Typography variant="body2" color="text.secondary">
-              {t("robot_utilization")}
-            </Typography>
-            <Typography variant="body2" sx={{ fontWeight: 600 }}>
-              {formatPercent(result.robotUtilization, locale, 1)}
-            </Typography>
-          </Box>
-          <LinearProgress
-            variant="determinate"
-            value={utilizationPct}
-            color={result.overCapacity ? "warning" : "primary"}
-            sx={{ height: 8, borderRadius: 1 }}
-          />
-        </Box>
-      </Paper>
-
       <Box
         sx={{
           display: "grid",
@@ -121,7 +107,7 @@ export default function ResultsPanel({ result }: Props) {
           gap: 2,
         }}
       >
-        <Card variant="outlined" sx={{ bgcolor: "primary.main", color: "primary.contrastText" }}>
+        <Card variant="outlined" sx={{ bgcolor: "rgb(0, 128, 128)", color: "#fff" }}>
           <CardContent>
             <Typography variant="overline" sx={{ opacity: 0.85 }}>
               {t("annual_labor_saving")}
@@ -131,7 +117,7 @@ export default function ResultsPanel({ result }: Props) {
             </Typography>
           </CardContent>
         </Card>
-        <Card variant="outlined" sx={{ bgcolor: "secondary.main", color: "secondary.contrastText" }}>
+        <Card variant="outlined" sx={{ bgcolor: "primary.main", color: "primary.contrastText" }}>
           <CardContent>
             <Typography variant="overline" sx={{ opacity: 0.9 }}>
               {t("roi_years")}

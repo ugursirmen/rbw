@@ -68,6 +68,7 @@ const en: Dict = {
   scenario_never: "never",
   rbware_system: "RB-Ware System Solutions",
   save_pdf: "Save as PDF",
+  pdf_title: "ROI Report",
 };
 
 const tr: Dict = {
@@ -131,6 +132,7 @@ const tr: Dict = {
   scenario_never: "asla",
   rbware_system: "RB-Ware Sistem Çözümleri",
   save_pdf: "PDF Olarak Kaydet",
+  pdf_title: "ROI Raporu",
 };
 
 const dictionaries: Record<Language, Dict> = { en, tr };

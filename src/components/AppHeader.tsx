@@ -7,7 +7,7 @@ import ButtonGroup from "@mui/material/ButtonGroup";
 import Divider from "@mui/material/Divider";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import { alpha, useTheme } from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
 import Image from "next/image";
 
 import { LANGUAGES } from "@/i18n/dictionary";
@@ -25,7 +25,7 @@ export default function AppHeader() {
       position="sticky"
       elevation={0}
       sx={{
-        bgcolor: "background.paper",
+        bgcolor: "rgb(50, 50, 50)",
         color: "text.primary",
         borderBottom: `1px solid ${theme.palette.divider}`,
         displayPrint: "none",
@@ -37,10 +37,6 @@ export default function AppHeader() {
             display: "flex",
             alignItems: "center",
             gap: 2,
-            px: 1.25,
-            py: 0.75,
-            borderRadius: 1.5,
-            bgcolor: "rgb(50, 50, 50)",
           }}
         >
           <Image
@@ -53,7 +49,7 @@ export default function AppHeader() {
             style={{ display: "block", width: LOGO_W, height: LOGO_H }}
           />
         </Box>
-        <Divider orientation="vertical" flexItem sx={{ my: 1.5 }} />
+        <Divider orientation="vertical" flexItem sx={{ my: 1.5, borderColor: "#fff" }} />
         <Box sx={{ display: "flex", flexDirection: "column", lineHeight: 1.1 }}>
           <Typography
             variant="overline"
@@ -69,7 +65,7 @@ export default function AppHeader() {
           <Typography
             variant="subtitle1"
             component="h1"
-            sx={{ fontWeight: 600, lineHeight: 1.2, mt: 0.25 }}
+            sx={{ fontWeight: 600, lineHeight: 1.2, mt: 0.25, color: "#fff" }}
           >
             {t("appTitle")}
           </Typography>

@@ -5,15 +5,18 @@ import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
+import Dialog from "@mui/material/Dialog";
+import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { useMemo, useState } from "react";
 
-import InputsPanel from "@/components/InputsPanel";
+import InputsPanel, { SYSTEMS } from "@/components/InputsPanel";
 import PartsTable from "@/components/PartsTable";
 import PdfLayout from "@/components/PdfLayout";
-import ResultsPanel from "@/components/ResultsPanel";
+import ResultsPanel, { CalculatedPanel } from "@/components/ResultsPanel";
 import SavingsChart from "@/components/SavingsChart";
+import Image from "next/image";
 import { useLanguage } from "@/i18n/LanguageProvider";
 import {
   DEFAULT_INPUTS,
@@ -41,19 +44,24 @@ async function captureSection(
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function addCanvasToPage(pdf: any, canvas: HTMLCanvasElement) {
+function addCanvasToPage(pdf: any, canvas: HTMLCanvasElement, fitToPage = false) {
   const pageWidth: number = pdf.internal.pageSize.getWidth();
   const pageHeight: number = pdf.internal.pageSize.getHeight();
-  const imgWidth = pageWidth;
-  const imgHeight = (canvas.height * imgWidth) / canvas.width;
+  const naturalHeight = (canvas.height * pageWidth) / canvas.width;
+  const imgWidth = fitToPage && naturalHeight > pageHeight
+    ? (canvas.width * pageHeight) / canvas.height
+    : pageWidth;
+  const imgHeight = fitToPage && naturalHeight > pageHeight ? pageHeight : naturalHeight;
   const imgData = canvas.toDataURL("image/jpeg", 0.95);
 
-  let heightLeft = imgHeight - pageHeight;
   pdf.addImage(imgData, "JPEG", 0, 0, imgWidth, imgHeight);
-  while (heightLeft > 0) {
-    pdf.addPage();
-    pdf.addImage(imgData, "JPEG", 0, -(imgHeight - heightLeft), imgWidth, imgHeight);
-    heightLeft -= pageHeight;
+  if (!fitToPage) {
+    let heightLeft = imgHeight - pageHeight;
+    while (heightLeft > 0) {
+      pdf.addPage();
+      pdf.addImage(imgData, "JPEG", 0, -(imgHeight - heightLeft), imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+    }
   }
 }
 
@@ -71,14 +79,15 @@ async function savePdf() {
   if (!page1) return;
 
   const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
-  addCanvasToPage(pdf, page1);
+  addCanvasToPage(pdf, page1, true);
 
   if (page2) {
     pdf.addPage();
     addCanvasToPage(pdf, page2);
   }
 
-  pdf.save("rbw-roi-calculator.pdf");
+  const date = new Date().toISOString().slice(0, 10);
+  pdf.save(`rbw-roi-report-${date}.pdf`);
 }
 
 export default function Home() {
@@ -86,6 +95,7 @@ export default function Home() {
   const [parts, setParts] = useState<Part[]>(DEFAULT_PARTS);
   const [inputs, setInputs] = useState<RoiInputs>(DEFAULT_INPUTS);
   const [selectedSystem, setSelectedSystem] = useState<string>("rb-mig");
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   const result = useMemo(() => calcRoi(parts, inputs), [parts, inputs]);
 
@@ -137,23 +147,83 @@ export default function Home() {
         {/* Row 1: Parts — full width */}
         <PartsTable parts={parts} perPart={result.perPart} onChange={setParts} />
 
-        {/* Row 2: Input variables (50%) | Calculated variables (50%) */}
+        {/* Row 2: Left (inputs + calculated) | Right (image + output) */}
         <Box
           sx={{
             display: "grid",
             gridTemplateColumns: { xs: "1fr", lg: "1fr 1fr" },
             gap: 3,
             alignItems: "stretch",
-            "& > *": { height: "100%" },
           }}
         >
-          <InputsPanel
-            inputs={inputs}
-            onChange={setInputs}
-            selectedSystem={selectedSystem}
-            onSystemChange={setSelectedSystem}
-          />
-          <ResultsPanel result={result} />
+          <Stack spacing={3}>
+            <InputsPanel
+              inputs={inputs}
+              onChange={setInputs}
+              selectedSystem={selectedSystem}
+              onSystemChange={setSelectedSystem}
+            />
+            <CalculatedPanel result={result} />
+            <ResultsPanel result={result} />
+          </Stack>
+          {selectedSystem && (() => {
+            const systemLabel = SYSTEMS.find((s) => s.value === selectedSystem)?.label ?? selectedSystem;
+            const labelChip = (
+              <Typography
+                variant="caption"
+                sx={{
+                  position: "absolute",
+                  top: 10,
+                  right: 10,
+                  bgcolor: "rgba(0,0,0,0.55)",
+                  color: "#fff",
+                  px: 1,
+                  py: 0.25,
+                  borderRadius: 1,
+                  fontWeight: 700,
+                  letterSpacing: 0.5,
+                  zIndex: 1,
+                  pointerEvents: "none",
+                }}
+              >
+                {systemLabel}
+              </Typography>
+            );
+            return (
+              <>
+                <Paper
+                  variant="outlined"
+                  onClick={() => setLightboxOpen(true)}
+                  sx={{ overflow: "hidden", position: "relative", cursor: "zoom-in" }}
+                >
+                  {labelChip}
+                  <Image
+                    src={`/${selectedSystem}.jpg`}
+                    alt={selectedSystem}
+                    fill
+                    style={{ objectFit: "contain" }}
+                    unoptimized
+                  />
+                </Paper>
+                <Dialog
+                  open={lightboxOpen}
+                  onClose={() => setLightboxOpen(false)}
+                  maxWidth="lg"
+                  slotProps={{ paper: { sx: { bgcolor: "transparent", boxShadow: "none", overflow: "hidden", position: "relative" } } }}
+                >
+                  {labelChip}
+                  <Image
+                    src={`/${selectedSystem}.jpg`}
+                    alt={selectedSystem}
+                    width={1200}
+                    height={800}
+                    style={{ width: "100%", height: "auto", display: "block", borderRadius: 8 }}
+                    unoptimized
+                  />
+                </Dialog>
+              </>
+            );
+          })()}
         </Box>
 
         {/* Row 3: Chart — full width */}

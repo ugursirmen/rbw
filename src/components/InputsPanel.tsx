@@ -8,8 +8,6 @@ import Paper from "@mui/material/Paper";
 import Select from "@mui/material/Select";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import Image from "next/image";
-
 import { useLanguage } from "@/i18n/LanguageProvider";
 import type { TranslationKey } from "@/i18n/dictionary";
 import type { RoiInputs } from "@/lib/roi";
@@ -33,7 +31,7 @@ const FIELDS: { key: keyof RoiInputs; label: TranslationKey; step?: number }[] =
   { key: "powerConsumption", label: "power_consumption", step: 0.1 },
 ];
 
-const SYSTEMS = [
+export const SYSTEMS = [
   { value: "rb-mig", label: "RB-Mig" },
   { value: "rb-tig", label: "RB-Tig" },
   { value: "rb-lazer", label: "RB-Lazer" },
@@ -76,19 +74,6 @@ export default function InputsPanel({ inputs, onChange, selectedSystem, onSystem
           ))}
         </Select>
       </FormControl>
-
-      {selectedSystem && (
-        <Box sx={{ mb: 2 }}>
-          <Image
-            src={`/${selectedSystem}.png`}
-            alt={selectedSystem}
-            width={600}
-            height={400}
-            style={{ width: "100%", height: "auto", borderRadius: 4 }}
-            unoptimized
-          />
-        </Box>
-      )}
 
       <Box
         sx={{

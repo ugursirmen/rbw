@@ -80,13 +80,11 @@ export default function PdfLayout({ parts, inputs, result, selectedSystem }: Pro
       <Stack id="roi-pdf-page1" spacing={3} sx={{ bgcolor: "background.paper", p: 3 }}>
 
       {/* Header */}
-      <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-        <Box sx={{ bgcolor: "rgb(50, 50, 50)", px: 1.25, py: 0.75, borderRadius: 1.5, display: "flex" }}>
-          <Image src="/logo.avif" alt="RBW" width={94} height={35} unoptimized style={{ display: "block" }} />
-        </Box>
-        <Divider orientation="vertical" flexItem />
-        <Typography variant="h2" sx={{ fontWeight: 700 }}>
-          ROI Report
+      <Box sx={{ display: "flex", alignItems: "center", gap: 2, bgcolor: "rgb(50, 50, 50)", px: 2, py: 1.25, borderRadius: 1.5 }}>
+        <Image src="/logo.avif" alt="RBW" width={94} height={35} unoptimized style={{ display: "block" }} />
+        <Divider orientation="vertical" flexItem sx={{ borderColor: "#fff" }} />
+        <Typography variant="h2" sx={{ fontWeight: 700, color: "#fff" }}>
+          {t("pdf_title")}
         </Typography>
       </Box>
       <Divider />
@@ -153,7 +151,7 @@ export default function PdfLayout({ parts, inputs, result, selectedSystem }: Pro
           <Box sx={{ display: "flex", flexDirection: "column" }}>
             <Typography variant="h3" sx={{ mb: 1 }}>{selectedSystem.toUpperCase()}</Typography>
             <Image
-              src={`/${selectedSystem}.png`}
+              src={`/${selectedSystem}.jpg`}
               alt={selectedSystem}
               width={600}
               height={400}

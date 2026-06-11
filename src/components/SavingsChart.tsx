@@ -77,9 +77,9 @@ export default function SavingsChart({ result, systemCost }: Props) {
     ScenarioKey,
     { label: TranslationKey; color: string }
   > = {
-    pessimistic: { label: "scenario_pessimistic", color: theme.palette.warning.main },
-    realistic: { label: "scenario_realistic", color: theme.palette.primary.main },
-    optimistic: { label: "scenario_optimistic", color: theme.palette.success.main },
+    pessimistic: { label: "scenario_pessimistic", color: "rgb(234, 18, 7)" },
+    realistic: { label: "scenario_realistic", color: "rgb(0, 128, 128)" },
+    optimistic: { label: "scenario_optimistic", color: "rgb(158, 158, 158)" },
   };
 
   const { years, projections } = useMemo(() => {
@@ -104,9 +104,9 @@ export default function SavingsChart({ result, systemCost }: Props) {
   const fiveYearTotal = realistic.cumulative[Math.min(5, realistic.cumulative.length - 1)];
   const hasBreakeven = realistic.breakevenYear !== null;
 
-  const primary = theme.palette.primary.main;
-  const success = theme.palette.success.main;
-  const secondary = theme.palette.secondary.main;
+  const primary = "rgb(0, 128, 128)";
+  const success = "rgb(158, 158, 158)";
+  const secondary = "rgb(234, 18, 7)";
 
   return (
     <Paper
